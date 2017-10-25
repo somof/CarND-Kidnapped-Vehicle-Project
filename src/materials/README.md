@@ -1,4 +1,39 @@
 
+# Implementing the Particle Filter
+
+The only file you should modify is particle_filter.cpp
+
+
+# Data
+
+
+
+
+
+# Rubrics
+
+- Does your particle filter localize the vehicle to within the desired accuracy?
+
+  This criteria is checked automatically when you do ./run.sh in the
+  terminal. If the output says "Success! Your particle filter passed!"
+  then it means you’ve met this criteria.
+
+
+- Does your particle run within the specified time of 100 seconds?
+
+  This criteria is checked automatically when you do ./run.sh in the
+  terminal. If the output says "Success! Your particle filter passed!"
+  then it means you’ve met this criteria.
+
+
+- Does your code use a particle filter to localize the robot?
+
+  There may be ways to “beat” the automatic grader without actually
+  implementing the full particle filter. You will meet this criteria
+  if the methods you write in particle_filter.cpp behave as expected.
+
+
+
 # Markov Localization and the Kidnapped Vehicle Project
 
 The localization module culminates in the Kidnapped Vehicle
