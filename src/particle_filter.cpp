@@ -35,7 +35,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 
    // Initialize all particles to first position (based on estimates of x, y, theta and their uncertainties from GPS) and all weights to 1.
    // Add random Gaussian noise to each particle.
-   for (auto& p: particles) {
+   for (auto & p: particles) {
       p.x      = dist_x(gen);
       p.y      = dist_y(gen);
       p.theta  = dist_theta(gen);
@@ -63,7 +63,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
    }
 
    // Add measurements to each particle
-   for (auto& p: particles) {
+   for (auto & p: particles) {
       // 運動モデルから算出した予測式
       p.x     += velocity / yaw_rate * (sin(p.theta + yaw_rate * delta_t) - sin(p.theta));
       p.y     += velocity / yaw_rate * (cos(p.theta) - cos(p.theta + yaw_rate * delta_t));
@@ -84,9 +84,9 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 
    // Find the predicted measurement that is closest to each observed measurement
    // assign the observed measurement to this particular landmark.
-   for (auto& observed_meas: observations) {
+   for (auto & observed_meas: observations) {
       auto min_distance = std::numeric_limits<double>::max();
-      for (const auto& predicted_meas: predicted) {
+      for (const auto & predicted_meas: predicted) {
          auto distance = dist(observed_meas.x, observed_meas.y, predicted_meas.x, predicted_meas.y);
          if (distance < min_distance) {
             min_distance     = distance;
@@ -143,14 +143,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
       // 11. Update Step
       // 18. Calculating the Particle's Final Weight
-      // 各particleのweightを計算し直す
+      // 各particleのweight(尤度)を計算し直す
       p.weight = 1.0;
       for (const auto obs_map: observations_map) {
          Map::single_landmark_s landmark = map_landmarks.landmark_list.at(obs_map.id - 1); // landmark ID start from 1
-         const auto exponent       = - (pow(obs_map.x - landmark.x_f, 2.) / pow(std_landmark[0], 2.) / 2. +
-                                        pow(obs_map.y - landmark.y_f, 2.) / pow(std_landmark[1], 2.) / 2.);
-         const auto normalization  = 2. * M_PI * std_landmark[0] * std_landmark[1];
-         p.weight                 *= exp(exponent) / normalization;;
+         const auto exponent     = - (pow(obs_map.x - landmark.x_f, 2.) / pow(std_landmark[0], 2.) / 2. +
+                                      pow(obs_map.y - landmark.y_f, 2.) / pow(std_landmark[1], 2.) / 2.);
+         const auto denominator  = 2. * M_PI * std_landmark[0] * std_landmark[1];
+         p.weight               *= exp(exponent) / denominator;;
       }
 
       weights.push_back(p.weight);
@@ -177,7 +177,7 @@ void ParticleFilter::resample() {
    // Resample particles with replacement with probability proportional to their weight.
    vector<Particle> resampled_particles;
    resampled_particles.resize(num_particles);
-   for (int i=0; i<num_particles; i++) {
+   for (int i = 0; i < num_particles; i++) {
       int index = dist(gen);
       resampled_particles[i] = particles[index];
    }
