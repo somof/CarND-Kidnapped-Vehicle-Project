@@ -28,7 +28,8 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
    particles.resize(num_particles);
 
    // creates a normal (Gaussian) distribution
-   std::default_random_engine       gen;
+   //std::default_random_engine       gen;
+   std::default_random_engine       gen(time(0));
    std::normal_distribution<double> dist_x(x, std[0]);
    std::normal_distribution<double> dist_y(y, std[1]);
    std::normal_distribution<double> dist_theta(theta, std[2]);
@@ -58,8 +59,8 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
    std::normal_distribution<double> N_theta(0, std_pos[2]);
 
    // Prevent Zero Division
-   if (yaw_rate <= FLT_MIN) {
-      yaw_rate += FLT_MIN;
+   if (fabs(yaw_rate) <= FLT_MIN) {
+      yaw_rate = FLT_MIN;
    }
 
    // Add measurements to each particle
@@ -126,6 +127,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       // }
 
 
+      // SUGGESTION
+      // What would happen if all landmarks are outside of sensor
+      // range? In such case, we should set the weight of this
+      // particle as zero, right?
+                            
+
+
+
       // 14. Converting Landmark Observations
       // 観測点を地図の座標系に変換する
       vector<LandmarkObs> observations_map;
@@ -181,7 +190,7 @@ void ParticleFilter::resample() {
       int index = dist(gen);
       resampled_particles[i] = particles[index];
    }
-   particles = resampled_particles;
+   particles = std::move(resampled_particles);
 }
 
 Particle ParticleFilter::SetAssociations(Particle particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y)
